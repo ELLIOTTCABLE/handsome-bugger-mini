@@ -1,5 +1,7 @@
 #pragma once
 
+#define TAPPING_TERM 175
+
 // disable old style macro handling: MACRO() & action_get_macro
 #define NO_ACTION_MACRO
 
