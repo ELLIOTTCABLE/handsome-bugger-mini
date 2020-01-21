@@ -1,5 +1,6 @@
 // vim: set expandtab ts=5 sts=5 sw=5:
 #include QMK_KEYBOARD_H
+#include <print.h>
 
 #define LCTL_ESC    LCTL_T(KC_ESC)
 #define RALT_EQL    RALT_T(KC_EQL)
@@ -163,12 +164,15 @@ void lalt_unds_finished(qk_tap_dance_state_t * state, void * user_data) {
    td_state = cur_dance(state);
    switch (td_state) {
    case SINGLE_TAP:
+      dprint("finished: SINGLE_TAP\n");
       register_code16(KC_UNDS);
       break;
    case SINGLE_HOLD:
+      dprint("finished: SINGLE_HOLD\n");
       register_mods(MOD_BIT(KC_LALT)); // for a layer-tap key, use `layer_on(_MY_LAYER)` here
       break;
    case DOUBLE_SINGLE_TAP: // allow pressing of two underscores `__` within tapping term
+      dprint("finished: DOUBLE_SINGLE_TAP\n");
       tap_code16(KC_UNDS);
       register_code16(KC_UNDS);
    }
@@ -177,12 +181,15 @@ void lalt_unds_finished(qk_tap_dance_state_t * state, void * user_data) {
 void lalt_unds_reset(qk_tap_dance_state_t * state, void * user_data) {
    switch (td_state) {
    case SINGLE_TAP:
+      dprint("reset: SINGLE_TAP\n");
       unregister_code16(KC_UNDS);
       break;
    case SINGLE_HOLD:
+      dprint("reset: SINGLE_HOLD\n");
       unregister_mods(MOD_BIT(KC_LALT)); // for a layer-tap key, use `layer_off(_MY_LAYER)` here
       break;
    case DOUBLE_SINGLE_TAP:
+      dprint("reset: DOUBLE_SINGLE_TAP\n");
       unregister_code16(KC_UNDS);
    }
 }
