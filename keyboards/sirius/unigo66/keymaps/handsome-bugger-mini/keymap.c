@@ -3,29 +3,6 @@
 #include <print.h>
 
 #define LCTL_ESC    LCTL_T(KC_ESC)
-#define RALT_EQL    RALT_T(KC_EQL)
-
-// Tap Dance Declarations
-enum td_keycodes {
-   LALT_UNDS, // left-alt when held, underscore when tapped
-};
-
-typedef enum {
-   SINGLE_TAP,
-   SINGLE_HOLD,
-   DOUBLE_SINGLE_TAP,
-} td_state_t;
-
-// a global instance of the tapdance state type
-static td_state_t td_state;
-
-// function to determine the current tapdance state
-int cur_dance(qk_tap_dance_state_t * state);
-
-// `finished` and `reset` functions for each tapdance keycode
-void lalt_unds_finished(qk_tap_dance_state_t * state, void * user_data);
-void lalt_unds_reset(qk_tap_dance_state_t * state, void * user_data);
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /*
@@ -39,12 +16,12 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+------|  [   |           |  ]   |------+------+------+------+------+--------|
  * | LShift |   Z  |   X  |   C  |   V  |   B  |      |           |      |   K  |   M  |   ,  |   .  |   /  | RShift |
  * `--------+------+------+---------------------------'           `---------------------------+------+------+--------'
- *   | TT(2)|LAlt/_|      |                                                                   |      |RAlt/=| TT(3) |
+ *   | TT(2)|   _  |      |                                                                   |      |   =  | TT(3) |
  *   `--------------------'                                                                   `--------------------'
  *                                        ,--------------.     ,----------------.
- *                                        |      |       |     |       |        |
- *                                        | Space|Gui/Bsp|     |Ctrl/Tb| Return |
- *                                        |      |       |     |       |        |
+ *                                        |      | LAlt  |     | RAlt  |        |
+ *                                        | Space|-------|     |-------| Return |
+ *                                        |      |Gui/Bsp|     |Ctrl/Tb|        |
  *                                        `--------------'     `----------------'
  */
      [0] = LAYOUT(
@@ -52,9 +29,9 @@ KC_GRV,   KC_7,     KC_5,     KC_3,     KC_1,     KC_9,     HYPR(KC_NO),   MEH(K
 KC_NO,    KC_Q,     KC_W,     KC_F,     KC_P,     KC_G,     KC_MINS,       KC_PLUS,  KC_J,     KC_L,     KC_U,     KC_Y,     KC_SCLN,  KC_BSLS,
 LCTL_ESC, KC_A,     KC_R,     KC_S,     KC_T,     KC_D,                              KC_H,     KC_N,     KC_E,     KC_I,     KC_O,     RGUI_T(KC_QUOT),
 KC_LSFT,  KC_Z,     KC_X,     KC_C,     KC_V,     KC_B,     KC_LBRC,       KC_RBRC,  KC_K,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,  KC_RSFT,
-TT(2),TD(LALT_UNDS),KC_NO,                                                                                         KC_NO,    RALT_EQL, TT(3),
-                                             KC_SPC,   LGUI_T(KC_BSPC),         RCTL_T(KC_TAB),KC_ENT,
-                                             KC_NO,    KC_NO,                   KC_NO,    KC_NO
+TT(2),KC_UNDERSCORE,KC_NO,                                                                                         KC_NO,    KC_EQL,   TT(3),
+                                             KC_SPC,   KC_LALT,                 KC_RALT,  KC_ENT,
+                                             KC_NO,    LGUI_T(KC_BSPC),    RCTL_T(KC_TAB),KC_NO
      ),
 /*
  *
@@ -95,12 +72,12 @@ _______,  _______,  _______,                                                    
  * |--------+------+------+------+------+------|      |           |      |------+------+------+------+------+--------|
  * |        | Pause|      | TO(0)|      |      |      |           |      |   ,  |  P1  |  P2  |  P3  |   /  |        |
  * `--------+------+------+---------------------------'           `---------------------------+------+------+--------'
- *   | TO(0)|Insert|PrScrn|                                                                   |   .  |RAlt/=| TO(3) |
+ *   | TO(0)|Insert|PrScrn|                                                                   |   .  |   =  | TO(3) |
  *   `--------------------'                                                                   `--------------------'
  *                                        ,--------------.     ,----------------.
  *                                        |      |       |     |       |        |
- *                                        |      |       |     |  P0   | Enter  |
- *                                        |      |       |     |       |        |
+ *                                        |      |       |     |-------| Enter  |
+ *                                        |      |       |     |  P0   |        |
  *                                        `--------------'     `----------------'
  */
      [2] = LAYOUT(
@@ -108,9 +85,9 @@ KC_F11,   KC_F7,    KC_F5,    KC_F3,    KC_F1,    KC_F9,    _______,       _____
 KC_F13,   TO(1),    _______,  _______,  _______,  _______,  _______,       _______,  KC_NLCK,  KC_P7,    KC_P8,    KC_P9,    KC_PMNS,  KC_F14,
 _______,  _______,  _______,  _______,  _______,  _______,                           KC_PAST,  KC_P4,    KC_P5,    KC_P6,    KC_PPLS,  KC_QUOT,
 _______,  KC_PAUS,  _______,  TO(0),    _______,  _______,  _______,       _______,  KC_PCMM,  KC_P1,    KC_P2,    KC_P3,    KC_PSLS,  _______,
-TO(0),    KC_INS,   KC_PSCR,                                                                                       KC_PDOT,RALT(KC_PEQL),TT(3),
-                                             _______,  _______,                 KC_P0,    KC_PENT,
-                                             _______,  _______,                 _______,  _______
+TO(0),    KC_INS,   KC_PSCR,                                                                                       KC_PDOT,  KC_PEQL,  TT(3),
+                                             _______,  _______,                 _______,  KC_PENT,
+                                             _______,  _______,                 KC_P0,    _______
      ),
 /*
  *
@@ -127,8 +104,8 @@ TO(0),    KC_INS,   KC_PSCR,                                                    
  *   `--------------------'                                                                   `--------------------'
  *                                        ,--------------.     ,----------------.
  *                                        |      |       |     |       |        |
- *                                        |      |       |     |  P0   | Enter  |
- *                                        |      |       |     |       |        |
+ *                                        |      |       |     |-------| Enter  |
+ *                                        |      |       |     |  P0   |        |
  *                                        `--------------'     `----------------'
  */
 	[3] = LAYOUT(
@@ -140,62 +117,4 @@ TO(2),    _______,  RESET,                                                      
                                              _______,  _______,                 _______,  _______,
                                              _______,  _______,                 _______,  _______
      )
-};
-
-
-int cur_dance(qk_tap_dance_state_t * state) {
-   if (state->count == 1) {
-      if (state->interrupted || !state->pressed) {
-         return SINGLE_TAP;
-      } else {
-         return SINGLE_HOLD;
-      }
-   }
-   if (state->count == 2) {
-      return DOUBLE_SINGLE_TAP;
-   } else {
-      return 3;
-   }
-}
-
-// handle the possible states for each tapdance keycode you define:
-
-void lalt_unds_finished(qk_tap_dance_state_t * state, void * user_data) {
-   td_state = cur_dance(state);
-   switch (td_state) {
-   case SINGLE_TAP:
-      dprint("finished: SINGLE_TAP\n");
-      register_code16(KC_UNDS);
-      break;
-   case SINGLE_HOLD:
-      dprint("finished: SINGLE_HOLD\n");
-      register_mods(MOD_BIT(KC_LALT)); // for a layer-tap key, use `layer_on(_MY_LAYER)` here
-      break;
-   case DOUBLE_SINGLE_TAP: // allow pressing of two underscores `__` within tapping term
-      dprint("finished: DOUBLE_SINGLE_TAP\n");
-      tap_code16(KC_UNDS);
-      register_code16(KC_UNDS);
-   }
-}
-
-void lalt_unds_reset(qk_tap_dance_state_t * state, void * user_data) {
-   switch (td_state) {
-   case SINGLE_TAP:
-      dprint("reset: SINGLE_TAP\n");
-      unregister_code16(KC_UNDS);
-      break;
-   case SINGLE_HOLD:
-      dprint("reset: SINGLE_HOLD\n");
-      unregister_mods(MOD_BIT(KC_LALT)); // for a layer-tap key, use `layer_off(_MY_LAYER)` here
-      break;
-   case DOUBLE_SINGLE_TAP:
-      dprint("reset: DOUBLE_SINGLE_TAP\n");
-      unregister_code16(KC_UNDS);
-   }
-}
-
-// define `ACTION_TAP_DANCE_FN_ADVANCED()` for each tapdance keycode, passing in `finished` and
-// `reset` functions
-qk_tap_dance_action_t tap_dance_actions[] = {
-   [LALT_UNDS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, lalt_unds_finished, lalt_unds_reset)
 };
