@@ -153,7 +153,7 @@ define EXEC_DFU
 	if $(DFU_PROGRAMMER) --version 2>&1 | $(GREP) -q 0.7 ; then\
 		$(DFU_PROGRAMMER) $(MCU) erase --force; \
 		if [ "$(1)" ]; then \
-			$(DFU_PROGRAMMER) $(MCU) flash --eeprom $(QUANTUM_PATH)/split_common/$(1);\
+			$(DFU_PROGRAMMER) $(MCU) flash --force --suppress-validation --eeprom $(QUANTUM_PATH)/split_common/$(1);\
 		fi; \
 	else \
 		$(DFU_PROGRAMMER) $(MCU) erase; \
@@ -161,7 +161,7 @@ define EXEC_DFU
 			$(DFU_PROGRAMMER) $(MCU) flash-eeprom $(QUANTUM_PATH)/split_common/$(1);\
 		fi; \
 	fi; \
-	$(DFU_PROGRAMMER) $(MCU) flash $(BUILD_DIR)/$(TARGET).hex;\
+	$(DFU_PROGRAMMER) $(MCU) flash --force --suppress-validation $(BUILD_DIR)/$(TARGET).hex;\
 	$(DFU_PROGRAMMER) $(MCU) reset
 endef
 
@@ -181,7 +181,7 @@ flip-ee: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).eep
 
 dfu-ee: $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).eep
 	if $(DFU_PROGRAMMER) --version 2>&1 | $(GREP) -q 0.7 ; then\
-		$(DFU_PROGRAMMER) $(MCU) flash --eeprom $(BUILD_DIR)/$(TARGET).eep;\
+		$(DFU_PROGRAMMER) $(MCU) flash --force --suppress-validation --eeprom $(BUILD_DIR)/$(TARGET).eep;\
 	else\
 		$(DFU_PROGRAMMER) $(MCU) flash-eeprom $(BUILD_DIR)/$(TARGET).eep;\
 	fi
