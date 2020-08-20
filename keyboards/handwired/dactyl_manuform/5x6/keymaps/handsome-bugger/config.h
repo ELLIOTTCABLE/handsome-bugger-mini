@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#define TAPPING_TERM 175
 
 #define USE_SERIAL
 
